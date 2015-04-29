@@ -23,6 +23,7 @@ parser = argparse.ArgumentParser()
 
 # need to revise to make 'write' and 'read' mutually exclusive options ...
 parser.add_argument("-f","--funnelfile", help="specify the named pipe file")
+parser.add_argument("-s","--syntax", help="syntax: (JSON,default), where default=CSV")
 #parser.add_argument("-r","--read", help="read from named pipe file")
 
 # verbose
@@ -58,20 +59,33 @@ try:
 
         #now parse the named pipe contents, assuming there's a JSON packet on each line
         #note that there's some funkiness in how named pipes work; had to account for an extra blank line at the end of the pipe
+        if (args.syntax == 'JSON' or args.syntax == 'json'):
+            splitResponse=response.split("\n")
+            OUT_STREAM.write('{')
+            index=0
+            iMax=len(splitResponse)
+            i=0
+            while (i<(iMax-1)): # the (iMax-1) here is because of the final blank line in the named pipe
+                #print index
+                index=index+1
+                OUT_STREAM.write(splitResponse[i])
+                if (i<(iMax-2)):
+                    OUT_STREAM.write(",")
+                i=i+1
+            OUT_STREAM.write("}")
 
-        splitResponse=response.split("\n")
-        OUT_STREAM.write('{')
-        index=0
-        iMax=len(splitResponse)
-        i=0
-        while (i<(iMax-1)): # the (iMax-1) here is because of the final blank line in the named pipe
-            #print index
-            index=index+1
-            OUT_STREAM.write(splitResponse[i])
-            if (i<(iMax-2)):
-                OUT_STREAM.write(",")
-            i=i+1
-        OUT_STREAM.write("}")
+        #note: default syntax is CSV
+        if (args.syntax == 'CSV' or args.syntax == 'csv' or args.syntax == None):
+            splitResponse=response.split("\n")
+            index=0
+            iMax=len(splitResponse)
+            i=0
+            while (i<(iMax-1)):
+                index=index+1
+                OUT_STREAM.write(splitResponse[i])
+                if (i<(iMax-2)):
+                    OUT_STREAM.write(",")
+                i=i+1
         OUT_STREAM.close()
         
 except Exception, exc:
