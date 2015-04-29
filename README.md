@@ -7,11 +7,6 @@ Options:
 - --filename (or -f) : specify the named pipe filename
 - --syntax (or -s): specify the syntax for combining packets in the output:  {JSON, CSV} (CSV is the default)
 
-usage: 
-
-> funnel [-h] [-f FUNNELFILE] [-s SYNTAX] [-v]
-
-
 ## Background
 
 This 'funnel' CLI acts as an inter-process server, using 'named pipes' to collect JSON packets from multiple pull commands and collate them into a single JSON packet. 
@@ -20,7 +15,7 @@ Because opening a named pipe for writing will 'block' the process until a read f
 
 Then, when the named pipe is read, the process 'unblocks'.
 
-## Example
+## Usage example
 
 In the following example, three JSON packets (provided as example files in the repo) are processed by the 'funnel' cli, writing them one by one into a named pipe named 'funnelfile' (which is the default -- one can change the name of this named pipe by using the option '-f' parameter)
 
