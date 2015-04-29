@@ -1,0 +1,84 @@
+#!/usr/bin/env python
+
+import sys, os, argparse, glob, json, urllib2,select
+from collections import OrderedDict
+
+LOGFILE     = sys.stderr
+IN_STREAM   = sys.stdin
+OUT_STREAM  = sys.stdout
+
+MODE = 'READ' #default to reading
+
+# check to see if we are in 'READ' or 'WRITE' mode:
+
+if select.select([sys.stdin,],[],[],0.0)[0]:
+    MODE = 'WRITE' 
+else:
+    MODE = 'READ' 
+
+funnelpath="./funnelfile"
+
+# parse the command line arguments
+parser = argparse.ArgumentParser()
+
+# need to revise to make 'write' and 'read' mutually exclusive options ...
+parser.add_argument("-f","--funnelfile", help="specify the named pipe file")
+#parser.add_argument("-r","--read", help="read from named pipe file")
+
+# verbose
+parser.add_argument("-v", "--verbose", action="store_true", help="increase output verbosity")
+
+args = parser.parse_args()
+
+# modify the funnel file path if desired
+
+if args.funnelfile:
+    funnelpath=args.funnelfile
+
+# process the input
+try:
+    if(MODE=='WRITE'):
+        try:
+            #if the funnel file doesn't exist, create it.  don't create it anew if it exists (saves on disk I/O)
+            if not os.path.exists(funnelpath):
+                os.mkfifo(funnelpath)
+        except OSError:
+            pass
+        wp = open(funnelpath,'w')
+        
+        for line in IN_STREAM:
+            wp.write(line)
+        wp.close()
+
+    if(MODE=='READ'):
+        #funnelpath=args.read
+        rp=open(funnelpath,'r')
+        response=rp.read()
+        rp.close()
+
+        #now parse the named pipe contents, assuming there's a JSON packet on each line
+        #note that there's some funkiness in how named pipes work; had to account for an extra blank line at the end of the pipe
+
+        splitResponse=response.split("\n")
+        OUT_STREAM.write('{')
+        index=0
+        iMax=len(splitResponse)
+        i=0
+        while (i<(iMax-1)): # the (iMax-1) here is because of the final blank line in the named pipe
+            #print index
+            index=index+1
+            OUT_STREAM.write(splitResponse[i])
+            if (i<(iMax-2)):
+                OUT_STREAM.write(",")
+            i=i+1
+        OUT_STREAM.write("}")
+        OUT_STREAM.close()
+        
+except Exception, exc:
+    LOGFILE.write("ERROR: %s" % exc)
+finally:
+    
+    LOGFILE.close()
+    IN_STREAM.close()
+
+    # should we perform a sys.stdout.close() here too?
