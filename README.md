@@ -4,8 +4,13 @@ A simple CLI for combining sensor values into one packet.
 
 Options:
 
-- f: specify the named pipe filename
-- s: specify the syntax for combining packets in the output:  {JSON, CSV} (CSV is the default)
+- --filename (or -f) : specify the named pipe filename
+- --syntax (or -s): specify the syntax for combining packets in the output:  {JSON, CSV} (CSV is the default)
+
+usage: 
+
+> funnel [-h] [-f FUNNELFILE] [-s SYNTAX] [-v]
+
 
 ## Background
 
