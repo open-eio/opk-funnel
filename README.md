@@ -39,7 +39,7 @@ Note that 'funnelfile' is a 'named pipe' that we've created for our process.  In
 
 Now, let's gather everything we've written to the named pipe, and put it into one combined JSON packet:
 
-> ./funnel > combined_packet.json
+> ./funnel -s JSON > combined_packet.json
 
 When we examine the contents of this packet, we see:
 
