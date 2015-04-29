@@ -1,5 +1,12 @@
 # opk-funnel 
 
+A simple CLI for combining sensor values into one packet.
+
+Options:
+
+- f: specify the named pipe filename
+- s: specify the syntax for combining packets in the output:  {JSON, CSV} (CSV is the default)
+
 ## Background
 
 This 'funnel' CLI acts as an inter-process server, using 'named pipes' to collect JSON packets from multiple pull commands and collate them into a single JSON packet. 
