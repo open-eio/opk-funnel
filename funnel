@@ -16,13 +16,15 @@ if select.select([sys.stdin,],[],[],0.0)[0]:
 else:
     MODE = 'READ' 
 
-funnelpath="./funnelfile"
+funnelpath= os.path.join(os.getcwd(),"funnelfile")
+
+#funnelpath="./funnelfile"
 
 # parse the command line arguments
 parser = argparse.ArgumentParser()
 
 # need to revise to make 'write' and 'read' mutually exclusive options ...
-parser.add_argument("-f","--funnelfile", help="specify the named pipe file")
+#parser.add_argument("-f","--funnelfile", required=True, help="specify the named pipe file")
 parser.add_argument("-s","--syntax", help="syntax: (JSON,default), where default=CSV")
 #parser.add_argument("-r","--read", help="read from named pipe file")
 
@@ -33,8 +35,8 @@ args = parser.parse_args()
 
 # modify the funnel file path if desired
 
-if args.funnelfile:
-    funnelpath=args.funnelfile
+#if args.funnelfile:
+#    funnelpath=args.funnelfile
 
 # process the input
 try:
